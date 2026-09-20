@@ -8,54 +8,63 @@
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: transparent; }
         canvas { width: 100%; height: 100%; display: block; }
     </style>
-    <!-- 1. Load PixiJS Engine -->
-    <script src="https://cloudflare.com"></script>
-    <!-- 2. Load Web-Compatible Live2D Core SDK -->
-    <script src="https://jsdelivr.net"></script>
-    <!-- 3. Load PixiJS-Live2D Bridge Wrapper -->
-    <script src="https://jsdelivr.net"></script>
 </head>
 <body>
 
     <canvas id="live2d-canvas"></canvas>
 
+    <!-- Switched entirely to cdnjs and unpkg to bypass jsdelivr connection blocks -->
+    <!-- 1. Load PixiJS Engine via cdnjs -->
+    <script defer src="https://cloudflare.com"></script>
+    
+    <!-- 2. Load Cubism 4 Core SDK via Live2D Official Server -->
+    <script defer src="https://live2d.com"></script>
+    
+    <!-- 3. Load PixiJS-Live2D Bridge Framework via unpkg alternative -->
+    <script defer src="https://unpkg.com"></script>
+
     <script>
-        const canvas = document.getElementById('live2d-canvas');
-        
-        // Initialize the PixiJS Graphic Application
-        const app = new PIXI.Application({
-            view: canvas,
-            autoStart: true,
-            resizeTo: window,
-            transparent: true,
-            backgroundAlpha: 0
-        });
+        window.addEventListener('DOMContentLoaded', () => {
+            // Give scripts a split second to register variables securely
+            setTimeout(() => {
+                if (typeof PIXI === 'undefined') {
+                    console.error("Network block: PIXI framework failed to initialize.");
+                    return;
+                }
 
-        // Using a short relative path because model.model3.json is right next to index.html
-        const modelUrl = "./web model.model3.json";
+                const canvas = document.getElementById('live2d-canvas');
+                
+                const app = new PIXI.Application({
+                    view: canvas,
+                    autoStart: true,
+                    resizeTo: window,
+                    transparent: true,
+                    backgroundAlpha: 0
+                });
 
-        PIXI.live2d.Live2DModel.from(modelUrl).then(model => {
-            app.stage.addChild(model);
+                const modelUrl = "./web model.model3.json";
 
-            // Math to perfectly scale and center the model inside the Framer container
-            const scaleX = app.screen.width / model.width;
-            const scaleY = app.screen.height / model.height;
-            const scale = Math.min(scaleX, scaleY) * 0.9; // Scales to 90% of frame size
-            
-            model.scale.set(scale);
-            model.anchor.set(0.5, 0.5);
-            model.position.set(app.screen.width / 2, app.screen.height / 2);
+                PIXI.live2d.Live2DModel.from(modelUrl).then(model => {
+                    app.stage.addChild(model);
 
-            // Enable automatic eye/head cursor tracking 
-            model.interactive = true;
-            model.trackedPointers = [{ id: 0, x: app.screen.width / 2, y: app.screen.height / 2 }];
+                    const scaleX = app.screen.width / model.width;
+                    const scaleY = app.screen.height / model.height;
+                    const scale = Math.min(scaleX, scaleY) * 0.9; 
+                    
+                    model.scale.set(scale);
+                    model.anchor.set(0.5, 0.5);
+                    model.position.set(app.screen.width / 2, app.screen.height / 2);
 
-            // Adjust position if the user resizes the browser window or Framer container
-            window.addEventListener('resize', () => {
-                model.position.set(app.screen.width / 2, app.screen.height / 2);
-            });
-        }).catch(err => {
-            console.error("Failed to load Live2D model:", err);
+                    model.interactive = true;
+                    model.trackedPointers = [{ id: 0, x: app.screen.width / 2, y: app.screen.height / 2 }];
+
+                    window.addEventListener('resize', () => {
+                        model.position.set(app.screen.width / 2, app.screen.height / 2);
+                    });
+                }).catch(err => {
+                    console.error("Failed to load Live2D model file runtime architecture:", err);
+                });
+            }, 200);
         });
     </script>
 </body>
