@@ -1,0 +1,27 @@
+{
+	"Version": 3,
+	"FileReferences": {
+		"Moc": "Web Model.moc3",
+		"Textures": [
+			"Web Model.4096/texture_00.png",
+			"Web Model.4096/texture_01.png"
+		],
+		"Physics": "Web Model.physics3.json",
+		"DisplayInfo": "Web Model.cdi3.json"
+	},
+	"Groups": [
+		{
+			"Target": "Parameter",
+			"Name": "EyeBlink",
+			"Ids": [
+				"ParamEyeLOpen",
+				"ParamEyeROpen"
+			]
+		},
+		{
+			"Target": "Parameter",
+			"Name": "LipSync",
+			"Ids": []
+		}
+	]
+}
