@@ -1,52 +1,64 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Pure Code Live2D</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live2D Framer Embed</title>
     <style>
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: transparent; }
         canvas { width: 100%; height: 100%; display: block; }
     </style>
-    <!-- Standard Open-Source Libraries -->
+    <!-- Library PixiJS v5 -->
     <script src="https://cloudflare.com"></script>
-    <script src="https://live2d.com"></script>
+    <!-- Library Core Live2D Alternatif (Anti-Block Security Policy) -->
+    <script src="https://jsdelivr.net"></script>
+    <!-- Wrapper Pixi-Live2D -->
     <script src="https://jsdelivr.net"></script>
 </head>
 <body>
+
     <canvas id="live2d-canvas"></canvas>
+
     <script>
+        const canvas = document.getElementById('live2d-canvas');
+        
         const app = new PIXI.Application({
-            view: document.getElementById('live2d-canvas'),
+            view: canvas,
             autoStart: true,
             resizeTo: window,
-            transparent: true
+            transparent: true,
+            backgroundAlpha: 0
         });
 
-        // Put the link to your manually rigged Live2D file here:
+        // MASUKKAN LINK YANG SUDAH ANDA BUAT DI LANGKAH 1 DI SINI:
         const modelUrl = "https://raw.githubusercontent.com/adeliadj02-sys/Live2dmodel/refs/heads/main/Web%20Model.model3.json";
 
         PIXI.live2d.Live2DModel.from(modelUrl).then(model => {
             app.stage.addChild(model);
+
+            // Atur skala agar pas di tengah canvas Framer
+            const scaleX = app.screen.width / model.width;
+            const scaleY = app.screen.height / model.height;
+            const scale = Math.min(scaleX, scaleY) * 0.9; 
             
-            // Traditional math to center the character
-            const scale = Math.min(app.screen.width / model.width, app.screen.height / model.height) * 0.9;
             model.scale.set(scale);
             model.anchor.set(0.5, 0.5);
             model.position.set(app.screen.width / 2, app.screen.height / 2);
 
-            // Enable built-in interactive tracking code
+            // Mengaktifkan fitur arah pandang mata mengikuti kursor mouse
             model.interactive = true;
             model.trackedPointers = [{ id: 0, x: app.screen.width / 2, y: app.screen.height / 2 }];
 
-            // Manual hit-detection code for clicking
-            model.on("pointertap", (event) => {
-                const hitAreas = model.hitTest(event.data.global.x, event.data.global.y);
-                if (hitAreas.includes("Head")) {
-                    model.motion("TapHead"); 
-                } else {
-                    model.motion("TapBody");
-                }
+            // Interaksi klik manual (Bisa ditambahkan file gerakannya nanti)
+            model.on("pointertap", () => {
+                // Jika ingin mencoba pemicu animasi manual nanti, bisa diisi di sini
             });
+
+            window.addEventListener('resize', () => {
+                model.position.set(app.screen.width / 2, app.screen.height / 2);
+            });
+        }).catch(err => {
+            console.error("Gagal memuat model Live2D:", err);
         });
     </script>
 </body>
