@@ -1,13 +1,13 @@
 {
 	"Version": 3,
 	"FileReferences": {
-		"Moc": "Web Model.moc3",
+		"Moc": "model.moc3",
 		"Textures": [
-			"Web Model.4096/texture_00.png",
-			"Web Model.4096/texture_01.png"
+			"model.4096/texture_00.png",
+			"model.4096/texture_01.png"
 		],
-		"Physics": "Web Model.physics3.json",
-		"DisplayInfo": "Web Model.cdi3.json"
+		"Physics": "model.physics3.json",
+		"DisplayInfo": "model.cdi3.json"
 	},
 	"Groups": [
 		{
